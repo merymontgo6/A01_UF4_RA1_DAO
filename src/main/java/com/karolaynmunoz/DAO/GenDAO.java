@@ -14,4 +14,5 @@ public interface GenDAO<T> {
     
     void delete(T t) throws Exception;
 
+    List<Object[]> agregacions();
 }

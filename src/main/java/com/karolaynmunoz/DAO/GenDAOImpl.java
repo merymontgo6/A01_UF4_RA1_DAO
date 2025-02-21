@@ -16,6 +16,7 @@ public abstract class GenDAOImpl<T> implements GenDAO<T> {
 
     private SessionFactory sessionFactory;
     private Class<T> classe;
+    public static String message = "==================";
 
 
     public GenDAOImpl(SessionFactory sessionFactory, Class<T> classe) {
@@ -59,6 +60,10 @@ public abstract class GenDAOImpl<T> implements GenDAO<T> {
         try (Session ses = sessionFactory.openSession()) {
             try {
                 entity = ses.find(classe, id);
+                System.out.println(message);
+                System.out.println(entity);
+                System.out.println(message);
+
             } catch (JDBCException jdbcex) {
                 handleException(ses, jdbcex, "Error de JDBC");                       
             } catch (HibernateException hbex) {
@@ -73,7 +78,6 @@ public abstract class GenDAOImpl<T> implements GenDAO<T> {
             System.err.println("Error d'Hibernate: " + hbex.getMessage());
             throw hbex;
         }
-    
         return entity;
     }
     
@@ -129,24 +133,48 @@ public abstract class GenDAOImpl<T> implements GenDAO<T> {
 
     @Override
     public List<T> getAll() throws Exception {
-    List<T> entities = new ArrayList<>();
-
-    // Obre una sessió amb Hibernate
-    try (Session ses = sessionFactory.openSession()) {
-        try {
-                Query<T> q = ses.createQuery("from " + classe.getName(), classe); 
-                entities = q.list();
+        List<T> entities = new ArrayList<>();
+        // Obre una sessió amb Hibernate
+        try (Session ses = sessionFactory.openSession()) {
+            try {
+                    Query<T> q = ses.createQuery("from " + classe.getName(), classe); 
+                    entities = q.list();
+                    System.out.println(message);
+                    for (int i = 0; i < entities.size(); i++) {
+                        System.out.println(entities.get(i));
+                    }
+                    System.out.println(message);
+            } catch (Exception e) {
+                // Gestionem l'error aquí (log, re-lançar excepció, etc.)
+                throw new Exception("Error en obtenir les entitats.", e);
+            }
         } catch (Exception e) {
-            // Gestionem l'error aquí (log, re-lançar excepció, etc.)
-            throw new Exception("Error en obtenir les entitats.", e);
+            // Error a l'obrir la sessió Hibernate
+            throw new Exception("Error al gestionar la sessió Hibernate.", e);
         }
-    } catch (Exception e) {
-        // Error a l'obrir la sessió Hibernate
-        throw new Exception("Error al gestionar la sessió Hibernate.", e);
+        return entities;
     }
 
-    return entities;
-}
+    @Override
+    public List<Object[]> agregacions() {
+        List <Object[]> agregacionsGroupBy = null;
+        try (Session session = sessionFactory.openSession()) {
+            try {
+                Query<Object[]> q = session.createQuery("SELECT r.nom_rol, COUNT(r) " + " from " + classe.getName() + " r GROUP BY r.nom_rol", Object[].class);
+                agregacionsGroupBy = q.list();
+                for (int i = 0; i < agregacionsGroupBy.size(); i++) {
+                    System.out.println(message);
+                    Object[] row = agregacionsGroupBy.get(i);
+                    for (Object field : row) {
+                        System.out.print(field + " ");
+                    }
+                    System.out.println();
+                    System.out.println(message);
+                }
+            } catch (Exception e) {}          
+        } catch (Exception e) {}
+        return agregacionsGroupBy;
+    }
 
     private void handleException(Session ses, Exception ex, String errorMsg) throws Exception{
         if (ses.getTransaction() != null && ses.getTransaction().isActive()) {
@@ -155,6 +183,4 @@ public abstract class GenDAOImpl<T> implements GenDAO<T> {
         System.err.println(errorMsg + ": " + ex.getMessage());
         throw ex;
     }
-
-
 }
