@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="com.karolaynmunoz.Model.Rol" table="rol">
+        <id name="id_rol" column="id_rol">
+            <generator class="identity"/>
+        </id>
+        <property name="nom_rol" column="nom_rol"/>
+        <set name="personatges" table="Personatge" cascade="all" inverse="true" fetch="lazy">
+            <key column="id_rol"/>
+            <one-to-many class="com.karolaynmunoz.Model.Personatge"/>
+        </set>
+    </class>
+</hibernate-mapping>
