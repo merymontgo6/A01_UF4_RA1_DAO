@@ -17,6 +17,9 @@
 
 4. D’igual forma que s’ha fet a l’enunciat, completeu el diagrama de classes de l’activitat A01 de la UF2 incorporant les interfícies, la classe abstracta i els DAOs.
    Per acoblar això, cal que relacioneu cada classe del model amb el seu DAO (sols aquelles classes que heu treballat a l’A03, no totes!!! ):
+   
+   ![alt text](image.png)
+   
 5. Per últim valoreu el paper que hi juga la classe abstracta. És en tots els casos necessària? En el cas de l’activitat A02 de la UF2, on vau emprar JDBC, penseu que seria d’utilitat?
 
    Crec que la classe abstracta pot ser molt útil en alguns casos, especialment quan volem definir funcionalitats comunes per a diferents DAOS i nmo repetir codi. Pero no sempre és necessària, ja que si els DAOS no fan ús dels mateixos metodes no serviria, pero en aquest cas si va ser necessària ja que es feia a totes les clases.
